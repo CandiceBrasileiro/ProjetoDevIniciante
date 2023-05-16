@@ -65,7 +65,7 @@ const deleteUser = (req, res) => {
   User.deleteOne({_id: idUser}).then(()=>{
     return res.status(200).json({
       success: true,
-      message: "Usuário exclúido",
+      message: "Usuário excluído",
       Cause: null,
     });
   }).catch((err) => {
