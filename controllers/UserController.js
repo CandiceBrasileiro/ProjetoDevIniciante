@@ -59,4 +59,22 @@ const updateUser = (req, res) => {
   });
 };
 
-module.exports = { getUsers, createUser, updateUser };
+const deleteUser = (req, res) => {
+  const idUser = req.params.userId;
+
+  User.deleteOne({_id: idUser}).then(()=>{
+    return res.status(200).json({
+      success: true,
+      message: "Usuário exclúido",
+      Cause: null,
+    });
+  }).catch((err) => {
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again.",
+      error: e.message,
+    });
+  });
+};
+
+module.exports = { getUsers, createUser, updateUser, deleteUser };
