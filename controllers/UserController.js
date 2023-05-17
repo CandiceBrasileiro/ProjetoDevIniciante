@@ -16,7 +16,9 @@ const createUser = (req, res) => {
     password: req.body.password,
   });
 
-  user.save().then((newUser) => {
+  user
+    .save()
+    .then((newUser) => {
       return res.json(201).json({
         sucess: true,
         message: 'Novo usuário criado',
@@ -33,48 +35,73 @@ const createUser = (req, res) => {
 };
 
 const updateUser = (req, res) => {
-  console.log('aqui')
+  console.log('aqui');
   const idUser = req.params.userId;
   User.findOneAndUpdate(
-    {_id: idUser},
-    {$set: {
-      name: req.body.name,
-      cpf: req.body.cpf,
-      password: req.body.password
+    { _id: idUser },
+    {
+      $set: {
+        name: req.body.name,
+        cpf: req.body.cpf,
+        password: req.body.password,
+      },
     },
-  },
-  {new: true}
-  ).then((user) => {
-    return res.status(200).json({
-      success: true,
-      message: "Usuário alterado",
-      Cause: user,
+    { new: true },
+  )
+    .then((user) => {
+      return res.status(200).json({
+        success: true,
+        message: 'Usuário alterado',
+        Cause: user,
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: e.message,
+      });
     });
-  }).catch((e) => {
-    res.status(500).json({
-      success: false,
-      message: "Server error. Please try again.",
-      error: e.message
-    });
-  });
 };
 
 const deleteUser = (req, res) => {
   const idUser = req.params.userId;
 
-  User.deleteOne({_id: idUser}).then(()=>{
-    return res.status(200).json({
-      success: true,
-      message: "Usuário excluído",
-      Cause: null,
+  User.deleteOne({ _id: idUser })
+    .then(() => {
+      return res.status(200).json({
+        success: true,
+        message: 'Usuário excluído',
+        Cause: null,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: e.message,
+      });
     });
-  }).catch((err) => {
-    res.status(500).json({
-      success: false,
-      message: "Server error. Please try again.",
-      error: e.message,
-    });
+};
+
+const authUser = (req, res) => {
+  const { cpf, password } = req.body;
+
+  User.findOne({ cpf: cpf }).then((doc) => {
+    const auth = password === doc.password;
+    if (auth) {
+      return res.status(200).json({
+        success: true,
+        message: 'usuário autenticado',
+        Cause: null,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Rong password. Please try again.'
+      });
+    }
   });
 };
 
-module.exports = { getUsers, createUser, updateUser, deleteUser };
+module.exports = { getUsers, createUser, updateUser, deleteUser, authUser };
