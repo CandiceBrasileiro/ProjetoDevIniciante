@@ -88,18 +88,33 @@ const authUser = (req, res) => {
   const { cpf, password } = req.body;
 
   User.findOne({ cpf: cpf }).then((doc) => {
-    const auth = password === doc.password;
-    if (auth) {
-      return res.status(200).json({
-        success: true,
-        message: 'usuário autenticado',
-        Cause: null,
+    if (!doc) {
+      return res.status(400).json({ message: 'usuário não existe' });
+    }
+    if (password === doc.password) {
+      User.findOneAndUpdate(
+        { cpf: cpf },
+        { $set: { online: true } },
+        { new: true },
+      ).then((user) => {
+        return res.status(200).json(console.log('passou', doc));
       });
     } else {
       res.status(400).json({
         success: false,
-        message: 'Rong password. Please try again.'
+        message: 'Rong password. Please try again.',
       });
+    }
+  });
+};
+
+const onlineUsers = (req, res) => {
+  User.find().then((doc) => {
+    const online = true;
+    if (online) {
+      return res.status(200).json();
+    } else {
+      res.status(500);
     }
   });
 };

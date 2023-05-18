@@ -18,7 +18,7 @@ let UserSchema = new mongoose.Schema({
   online: {
     type: Boolean,
     default: 0,
-  }
+  },
 });
 
 // UserSchema.pre('save', function(next) {
