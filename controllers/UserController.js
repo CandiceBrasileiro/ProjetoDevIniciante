@@ -108,15 +108,14 @@ const authUser = (req, res) => {
   });
 };
 
-const onlineUsers = (req, res) => {
-  User.find().then((doc) => {
-    const online = true;
-    if (online) {
-      return res.status(200).json();
-    } else {
-      res.status(500);
-    }
-  });
+const onlineUsers =  async (req, res) => {
+
+  try {
+    const docs = await User.find({online: {$eq: true}});
+    return res.status(200).json({userOnline: docs, message: 'Usuários encontrados'})
+  } catch (err) {
+    res.status(500).json(err);
+  } 
 };
 
-module.exports = { getUsers, createUser, updateUser, deleteUser, authUser };
+module.exports = { getUsers, createUser, updateUser, deleteUser, authUser, onlineUsers };
