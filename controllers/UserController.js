@@ -2,6 +2,7 @@ const User = require('../models/UserModel.js');
 const bcrypt = require('bcryptjs');
 const validarCPF = require('../helper/cpf');
 const validarName = require('../helper/validarName');
+const validarPassword = require('../helper/validarPassword');
 
 const getUsers = async (req, res) => {
   try {
@@ -24,6 +25,10 @@ const createUser = (req, res) => {
   }
 
   if (!validarName(name)) {
+    return res.json({ message: 'O campo deve ser preenchido' });
+  }
+
+  if (!validarPassword(password)) {
     return res.json({ message: 'O campo deve ser preenchido' });
   }
 
