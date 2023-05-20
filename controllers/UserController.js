@@ -1,4 +1,5 @@
 const User = require('../models/UserModel.js');
+const bcrypt = require('bcryptjs');
 
 const getUsers = async (req, res) => {
   try {
@@ -10,16 +11,20 @@ const getUsers = async (req, res) => {
 };
 
 const createUser = (req, res) => {
+  const password = req.body.password;
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+
   const user = new User({
     name: req.body.name,
     cpf: req.body.cpf,
-    password: req.body.password,
+    password: hash,
   });
 
   user
     .save()
     .then((newUser) => {
-      return res.json(201).json({
+      return res.status(201).json({
         sucess: true,
         message: 'Novo usuário criado',
         Cause: newUser,
@@ -37,13 +42,17 @@ const createUser = (req, res) => {
 const updateUser = (req, res) => {
   console.log('aqui');
   const idUser = req.params.userId;
+  const password = req.body.password;
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+
   User.findOneAndUpdate(
     { _id: idUser },
     {
       $set: {
         name: req.body.name,
         cpf: req.body.cpf,
-        password: req.body.password,
+        password: hash,
       },
     },
     { new: true },
@@ -91,7 +100,10 @@ const authUser = (req, res) => {
     if (!doc) {
       return res.status(400).json({ message: 'usuário não existe' });
     }
-    if (password === doc.password) {
+
+    const correct = bcrypt.compareSync(password, doc.password);
+
+    if (correct) {
       User.findOneAndUpdate(
         { cpf: cpf },
         { $set: { online: true } },
@@ -108,14 +120,22 @@ const authUser = (req, res) => {
   });
 };
 
-const onlineUsers =  async (req, res) => {
-
+const onlineUsers = async (req, res) => {
   try {
-    const docs = await User.find({online: {$eq: true}});
-    return res.status(200).json({userOnline: docs, message: 'Usuários encontrados'})
+    const docs = await User.find({ online: { $eq: true } });
+    return res
+      .status(200)
+      .json({ userOnline: docs, message: 'Usuários encontrados' });
   } catch (err) {
     res.status(500).json(err);
-  } 
+  }
 };
 
-module.exports = { getUsers, createUser, updateUser, deleteUser, authUser, onlineUsers };
+module.exports = {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  authUser,
+  onlineUsers,
+};
