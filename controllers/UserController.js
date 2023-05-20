@@ -104,6 +104,9 @@ const authUser = (req, res) => {
     const correct = bcrypt.compareSync(password, doc.password);
 
     if (correct) {
+      req.session.doc = {
+        cpf: doc.cpf,
+      };
       User.findOneAndUpdate(
         { cpf: cpf },
         { $set: { online: true } },
@@ -131,6 +134,34 @@ const onlineUsers = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  const idUser = req.params.userId;
+
+  User.findOneAndUpdate(
+    { _id: idUser },
+    {
+      $set: {
+        online: false,
+      },
+    },
+    { new: true },
+  )
+    .then((user) => {
+      req.session.user = undefined;
+      return res.status(200).json({
+        success: true,
+        message: 'logout',
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: e.message,
+      });
+    });
+};
+
 module.exports = {
   getUsers,
   createUser,
@@ -138,4 +169,5 @@ module.exports = {
   deleteUser,
   authUser,
   onlineUsers,
+  logout,
 };
