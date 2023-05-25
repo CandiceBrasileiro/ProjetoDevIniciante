@@ -46,12 +46,21 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('usuário connectado', socket.id);
-  // socket.on('disconnect', (reason) => {
-  //   console.log('Usuário desconectado', socket.id); //não tá funcionando
-  // });
-  socket.on('set_userName', (user) => {
-    socket.data.userName = user;
+
+  socket.on('set_userName', (userName) => {
+    socket.data.userName = userName;
     console.log(socket.data.userName);
+  });
+  socket.on('disconnect', (reason) => {
+    console.log('Usuário desconectado', socket.id);
+  });
+
+  socket.on('message', (text) => {
+    io.emit('receive_message', {
+      text,
+      authorId: socket.id,
+      author: socket.data.userName,
+    });
   });
 });
 
