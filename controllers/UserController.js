@@ -1,6 +1,6 @@
 const User = require('../models/UserModel.js');
 const bcrypt = require('bcryptjs');
-const validarCPF = require('../helper/cpf');
+const { apenasNumeros, validarCPF } = require('../helper/cpf');
 const validarName = require('../helper/validarName');
 const validarPassword = require('../helper/validarPassword');
 
@@ -14,27 +14,26 @@ const getUsers = async (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const password = req.body.password;
+  const { cpf, password, name } = req.body;
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(password, salt);
-  const cpf = req.body.cpf;
-  const name = req.body.name;
+  const newCpf = apenasNumeros(cpf);
 
-  if (!validarCPF(cpf)) {
+  if (!validarCPF(newCpf)) {
     return res.json({ message: 'O cpf é inválido' });
   }
 
-  if (!validarName(name)) {
+  if (validarName(name)) {
     return res.json({ message: 'O campo deve ser preenchido' });
   }
 
-  if (!validarPassword(password)) {
+  if (validarPassword(password)) {
     return res.json({ message: 'O campo deve ser preenchido' });
   }
 
   const user = new User({
     name: name,
-    cpf: cpf,
+    cpf: newCpf,
     password: hash,
   });
 
@@ -112,12 +111,12 @@ const deleteUser = (req, res) => {
 
 const authUser = (req, res) => {
   const { cpf, password } = req.body;
-
-  User.findOne({ cpf: cpf }).then((doc) => {
+  const newCpf = apenasNumeros(cpf);
+  console.log('controler', newCpf, password);
+  User.findOne({ cpf: newCpf }).then((doc) => {
     if (!doc) {
-      return res.status(400).json({ message: 'usuário não existe' });
+      return res.status(404).json({ message: 'usuário não existe' });
     }
-
     const correct = bcrypt.compareSync(password, doc.password);
 
     if (correct) {

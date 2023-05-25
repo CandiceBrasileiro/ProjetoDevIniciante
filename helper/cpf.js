@@ -31,4 +31,11 @@ function validarCPF(cpf) {
   return true;
 }
 
-module.exports = validarCPF;
+function apenasNumeros(cpf) {
+  return cpf.replace(/[^\d]+/g, '');
+}
+
+module.exports = {
+  apenasNumeros,
+  validarCPF,
+};
