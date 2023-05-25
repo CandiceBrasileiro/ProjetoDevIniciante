@@ -4,11 +4,10 @@ const cors = require('cors');
 const app = express();
 const router = require('./router/Router');
 const session = require('express-session');
-// const http = require('http');
-// const server = http.createServer(app);
-// const io = require('socket.io')(server, {
-//   cors: { origin: 'http://localhost:5173' },
-// });
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: { origin: 'http://localhost:5173' },
+});
 
 app.set('trust proxy', 1); // trust first proxy
 app.use(
@@ -49,7 +48,6 @@ app.get('/', (req, res) => {
 //   console.log('usuário connectado', socket.id);
 // });
 
-app.listen(8181, async () => {
-  //app.listen 3131
+server.listen(8181, async () => {
   console.log('Servidor rodando');
 });
