@@ -44,9 +44,16 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// io.on('connection', (socket) => {
-//   console.log('usuário connectado', socket.id);
-// });
+io.on('connection', (socket) => {
+  console.log('usuário connectado', socket.id);
+  // socket.on('disconnect', (reason) => {
+  //   console.log('Usuário desconectado', socket.id); //não tá funcionando
+  // });
+  socket.on('set_userName', (user) => {
+    socket.data.userName = user;
+    console.log(socket.data.userName);
+  });
+});
 
 server.listen(8181, async () => {
   console.log('Servidor rodando');

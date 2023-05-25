@@ -128,7 +128,7 @@ const authUser = (req, res) => {
         { $set: { online: true } },
         { new: true },
       ).then((user) => {
-        return res.status(200).json(console.log('passou', doc));
+        return res.status(200).json({ doc });
       });
     } else {
       res.status(400).json({
