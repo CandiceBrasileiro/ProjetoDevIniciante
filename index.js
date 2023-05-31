@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
 
   socket.on('set_userName', (userName) => {
     socket.data.userName = userName;
-    console.log(socket.data.userName);
+    io.emit('online', { name: socket.data.userName });
   });
   socket.on('disconnect', (reason) => {
     console.log('Usuário desconectado', socket.id);
