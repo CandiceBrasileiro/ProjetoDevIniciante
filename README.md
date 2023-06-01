@@ -1,12 +1,14 @@
 # ProjetoDevIniciante
 
+Deve-se clonar a branch backend utilizando o comando no terminal: git clone -b backend https://github.com/CandiceBrasileiro/ProjetoDevIniciante.git
+
 
 
 Essa documentação de software é uma descrição passo a passo de como utilizar e configurar uma aplicação de chat em tempo real com back-end em Node.js, front-end em React e a biblioteca socket.io para comunicação em tempo real.
 
 A documentação é dividida em seis etapas:
 
-1. Clonar o projeto deve-se instalar as dependências de cada pasta, client e server: 
+1. Clonar o projeto deve-se instalar as dependências: 
 
 	Ao clonar o projeto utilizar npm install no cmd para instalar todas as dependências do projeto;
 
@@ -77,7 +79,7 @@ Existem duas formas de criar usuários para utilizar o chat. A primeira forma é
 
 6. Observações adicionais:
 
-	Só é possível acessar o chat com usuários cadastrados e cpf válido, ao sair da tela do chat deve-se primeiro clicar no botão de logout no canto direito da tela deixar o usuário offline.	
+	Só é possível acessar o chat com usuários cadastrados e cpf válido, ao sair da tela do chat deve-se primeiro clicar no botão de logout no canto esquerdo da tela deixar o usuário offline.	
 	O projeto possui outras rotas que serão listadas abaixo, essas mesmas rotas serão encontradas na pasta server -> router -> Router.js: 
 
 router.get('/users', getUsers); // listar usuários
